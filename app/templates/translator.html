@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>旅行即時翻譯 - 繁中 / 英文 / 日文</title>
+    <title>翻譯工具 - 繁中 / 英文 / 日文</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -13,16 +13,16 @@
     <main class="app-shell">
       <section class="hero-card">
         <div class="hero-copy">
-          <p class="eyebrow">Travel Translator</p>
-          <h1>旅行時可直接開口說，立刻翻成對方聽得懂的語言。</h1>
+          <p class="eyebrow">Translation</p>
+          <h1>繁中、英文、日文即時互譯</h1>
           <p class="lead">
-            支援繁體中文、英文、日文互譯。可用麥克風輸入，翻譯後立即播放給對方聽，手機上也適合單手操作。
+            支援繁體中文、英文、日文互譯。可直接輸入文字或使用語音，翻譯結果會即時顯示並可播放。
           </p>
         </div>
 
         <div class="control-grid">
           <label class="field">
-            <span>翻譯方向</span>
+            <span>語言方向</span>
             <select id="directionSelect">
               <option value="zh-en">繁中 → 英文</option>
               <option value="zh-ja">繁中 → 日文</option>
@@ -34,20 +34,20 @@
 
           <label class="field">
             <span>輸入內容</span>
-            <textarea id="inputText" rows="4" placeholder="按麥克風說話，或直接輸入要翻譯的內容。"></textarea>
+            <textarea id="inputText" rows="4" placeholder="可直接輸入，或按麥克風開始說話。"></textarea>
           </label>
 
           <div class="action-row">
             <button id="micButton" class="primary-btn" type="button">
               <span class="mic-dot"></span>
-              開始說話
+              語音輸入
             </button>
-            <button id="translateButton" class="secondary-btn" type="button">立即翻譯</button>
+            <button id="translateButton" class="secondary-btn" type="button">翻譯</button>
           </div>
 
           <div class="status-bar">
-            <span id="statusText">準備好了。請先選擇翻譯方向。</span>
-            <span id="voiceStatus" class="voice-status">麥克風未啟用</span>
+            <span id="statusText">準備好了。</span>
+            <span id="voiceStatus" class="voice-status">服務正常</span>
           </div>
         </div>
       </section>
@@ -58,36 +58,36 @@
             <h2>原文</h2>
             <button id="copySourceBtn" class="ghost-btn" type="button">複製</button>
           </div>
-          <div id="sourcePreview" class="result-text muted">翻譯前的內容會顯示在這裡。</div>
+          <div id="sourcePreview" class="result-text muted">輸入的內容會顯示在這裡。</div>
         </article>
 
         <article class="result-card target-card">
           <div class="card-head">
-            <h2>翻譯結果</h2>
+            <h2>結果</h2>
             <div class="card-actions">
-              <button id="speakButton" class="ghost-btn" type="button" disabled>播放</button>
+              <button id="speakButton" class="ghost-btn" type="button" disabled>朗讀</button>
               <button id="copyTargetBtn" class="ghost-btn" type="button" disabled>複製</button>
             </div>
           </div>
-          <div id="targetPreview" class="result-text muted">翻譯後的內容會顯示在這裡。</div>
+          <div id="targetPreview" class="result-text muted">翻譯結果會顯示在這裡。</div>
         </article>
       </section>
 
       <section class="hint-card">
         <div>
           <h3>使用方式</h3>
-          <p>選好語言方向後，按下麥克風就能直接講話。翻譯完成後，按「播放」可把結果念給對方聽。</p>
+          <p>選好語言方向後，直接輸入文字或按下語音輸入。翻譯完成後可立即朗讀給對方聽。</p>
         </div>
         <div class="hint-list">
-          <span>適合點餐</span>
-          <span>適合問路</span>
-          <span>適合飯店櫃檯</span>
+          <span>文字輸入</span>
+          <span>語音翻譯</span>
+          <span>即時播放</span>
         </div>
       </section>
     </main>
 
     <script>
-      window.TRANSLATOR_API_BASE_URL = "";
+      window.TRANSLATOR_API_BASE_URL = "{{ translator_api_base_url }}";
     </script>
     <script src="../static/translator.js"></script>
   </body>
