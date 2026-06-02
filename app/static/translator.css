@@ -393,6 +393,90 @@ button {
   white-space: nowrap;
 }
 
+.presentation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(2, 6, 12, 0.92);
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.presentation-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.presentation-shell {
+  width: min(960px, 100%);
+  min-height: min(82vh, 900px);
+  padding: 24px;
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(14, 24, 42, 0.96), rgba(7, 15, 27, 0.98));
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.65);
+  display: grid;
+  gap: 24px;
+}
+
+.presentation-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.presentation-badge {
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #bfefff;
+  background: rgba(66, 215, 255, 0.12);
+  border: 1px solid rgba(66, 215, 255, 0.2);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.presentation-copy {
+  display: grid;
+  align-content: center;
+  gap: 18px;
+  text-align: center;
+  padding: clamp(12px, 5vw, 40px);
+}
+
+.presentation-source {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2.4vw, 1.4rem);
+  line-height: 1.7;
+}
+
+.presentation-target {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(2.4rem, 9vw, 6rem);
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+  word-break: break-word;
+}
+
+.presentation-hint {
+  margin: 0;
+  text-align: center;
+  color: var(--muted-2);
+  font-size: 0.95rem;
+}
+
+body.presentation-mode {
+  overflow: hidden;
+}
+
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.22); }
   70% { box-shadow: 0 0 0 12px rgba(255, 255, 255, 0); }
@@ -402,9 +486,7 @@ button {
 @media (max-width: 900px) {
   .hero-card,
   .result-grid,
-  .hint-card {
-    grid-template-columns: 1fr;
-  }
+  .hint-card {\n    grid-template-columns: 1fr;\n  }
 
   .hero-card {
     padding: 22px;
@@ -452,5 +534,15 @@ button {
 
   .result-text {
     min-height: 150px;
+  }
+
+  .presentation-shell {
+    min-height: calc(100vh - 32px);
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .presentation-target {
+    font-size: clamp(2rem, 16vw, 4.2rem);
   }
 }
