@@ -1,11 +1,106 @@
-<div align="center">
+# 語音辨識 TXT / SRT 網站
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+## 功能
+- 僅上傳音訊檔案後進行語音辨識
+- 顯示辨識文字內容
+- 下載 `transcript.txt`
+- 下載 `subtitle.srt`（可直接拿去影片上字幕）
+- 可指定音檔語言：繁體中文、英文、日文、韓文，或自動辨識
+- Google 登入後才能使用
+- 每位使用者預設 30 分鐘額度
+- 管理者（預設 `theoder@gmail.com`）可調整每位使用者分鐘數
+- 支援雲端資料庫（`DATABASE_URL`，建議 Postgres）
 
-  <h1>Built with AI Studio</h2>
+## 啟動方式
+1. 建立虛擬環境並安裝套件
+   ```bash
+   python3 -m venv .venv
+   ```
+   ```bash
+   .venv/bin/pip install -r requirements.txt
+   ```
+2. 設定 Worker 轉寫端點（可選，預設是 `https://speech-transcribe-worker.theoder.workers.dev`）
+   ```bash
+   export WORKER_TRANSCRIBE_URL="https://speech-transcribe-worker.theoder.workers.dev"
+   ```
+3. 設定 Google 登入 Client ID（必要）
+   ```bash
+   export GOOGLE_CLIENT_ID="你的 Google Web Client ID"
+   ```
+4. （可選）管理者帳號、Session 金鑰
+   ```bash
+   export ADMIN_EMAIL="theoder@gmail.com"
+   export SESSION_SECRET="請改成隨機長字串"
+   ```
+   也可以直接在專案根目錄建立 `.env`，例如：
+   ```bash
+   GEMINI_API_KEY="你的 Gemini API key"
+   GEMINI_MODEL="gemini-2.5-flash"
+   ```
+   伺服器啟動時會自動讀取 `.env`，但請不要把 `.env` 放進 Git 或前端靜態檔案。
+5. 設定雲端資料庫（正式環境強烈建議）
+   ```bash
+   export DATABASE_URL="postgresql+psycopg://USER:PASSWORD@HOST:5432/DBNAME"
+   ```
+6. （可選）若 Worker 不可用，可改用伺服器端 API Key
+   ```bash
+   export OPENAI_API_KEY="你的金鑰"
+   ```
+7. 啟動
+   ```bash
+   .venv/bin/uvicorn app.main:app --reload --port 8000
+   ```
+8. 開啟瀏覽器：`http://127.0.0.1:8000`
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## 備註
+- 網頁不顯示 API Key 欄位，金鑰可完全留在 Worker 或伺服器環境變數。
+- 上傳限制為音檔：`mp3`、`wav`、`m4a`。
+- 前端單檔上限預設為 `25MB`，可用 `MAX_AUDIO_FILE_MB` 調整。
+- Vercel Function 的請求上限約為 `4.5MB`；正式部署時，大音檔會由瀏覽器直接送到 Worker，Vercel 只處理登入、額度檢查與扣分鐘。
+- TXT 固定使用 `gpt-4o-mini-transcribe`，SRT 固定使用 `whisper-1`。
+- 若已知音檔語言，建議在上傳前指定語言，可讓語音辨識更快速。
+- 選擇繁體中文時，TXT / SRT 會統一輸出繁體中文。
+- 系統不保留辨識檔案，請立即下載 TXT / SRT。
+- 若未設定 `DATABASE_URL`，系統會回退使用本機 `app.db`（僅適合開發測試）。
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Vercel 部署
+1. 將此資料夾推到 GitHub。
+2. 在 Vercel 匯入該 repo（Framework 可選 Other）。
+3. 在 Vercel 專案設定 `Environment Variables` 新增：
+   - `DATABASE_URL`
+   - `GOOGLE_CLIENT_ID`
+   - `SESSION_SECRET`
+   - `ADMIN_EMAIL`
+   - `WORKER_TRANSCRIBE_URL`
+4. 在 Google OAuth 用戶端加入正式網域到 `Authorized JavaScript origins`，例如：
+   - `https://你的專案.vercel.app`
+   並在 `Authorized redirect URIs` 加入 Google 登入回傳網址：
+   - `https://你的專案.vercel.app/api/auth/google/redirect`
+5. 重新部署。
 
-</div>
+## 正式版建議架構
+- 前端：Vercel
+- 翻譯服務：Cloudflare Worker
+- Gemini API Key：只放在 Cloudflare Worker 的 Secret / Environment Variables
+
+### Cloudflare Worker
+1. 建立一個 Worker，路由例如：`https://winfredkuo-translator.theoder.workers.dev`
+2. 在 Worker 的環境變數設定：
+   - `GEMINI_API_KEY`
+   - `GEMINI_MODEL`（可選，預設 `gemini-2.5-flash`）
+3. 把翻譯 API 設在 `/api/translate`
+4. 開啟 CORS，至少允許：
+   - `http://localhost:8000`
+   - `http://127.0.0.1:8000`
+   - `https://你的專案.vercel.app`
+
+### Vercel
+1. 把 GitHub repo 匯入 Vercel。
+2. 在 Vercel 環境變數設定：
+   - `TRANSLATOR_API_BASE_URL=https://winfredkuo-translator.theoder.workers.dev`
+3. 如果你還要用本機 SQLite 或其他後端功能，再另外設定對應變數。
+
+### GitHub
+1. 只提交程式碼，不提交 `.env`。
+2. `.env` 只留給本機開發。
+3. 不要把 `GEMINI_API_KEY` 寫進前端 JS、HTML、README 範例或公開 issue。
