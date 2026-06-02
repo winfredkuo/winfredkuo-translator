@@ -8,7 +8,13 @@ HTML = """<!doctype html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>即時翻譯工具</title>
+  <title>翻譯工具 - 繁中 / 英文 / 日文</title>
+  <meta name="theme-color" content="#07111f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="/static/manifest.json" />
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/static/icon.svg" />
   <style>
     :root{--bg:#07111f;--panel:rgba(9,20,36,.82);--line:rgba(95,215,255,.22);--text:#eaf7ff;--muted:#9bb1c4;--accent:#42d7ff;--accent2:#38f5b3;--danger:#ff6b8a;}
     *{box-sizing:border-box}
@@ -50,7 +56,7 @@ HTML = """<!doctype html>
 
     <section class="grid">
       <div class="card">
-        <div class="toprow"><div class="label">輸入</div><div class="badge" id="conn">Cloudflare Worker 連線中</div></div>
+        <div class="toprow"><div class="label">輸入</div><div class="badge" id="conn">服務可用</div></div>
         <div class="stack">
           <select id="direction" class="select">
             <option value="zh-TW:en">繁中 → 英文</option>
@@ -62,8 +68,8 @@ HTML = """<!doctype html>
           </select>
           <textarea id="input" class="input" placeholder="按麥克風說話，或直接輸入要翻譯的內容"></textarea>
           <div class="controls">
-            <button id="mic" class="btn ghost">開始說話</button>
-            <button id="translate" class="btn primary">立即翻譯</button>
+            <button id="mic" class="btn ghost">語音輸入</button>
+            <button id="translate" class="btn primary">翻譯</button>
           </div>
           <div id="status" class="status tiny">準備好了。</div>
         </div>
@@ -74,12 +80,12 @@ HTML = """<!doctype html>
         <div id="output" class="panel">翻譯後的內容會顯示在這裡。</div>
         <div class="divider"></div>
         <div class="actions">
-          <button id="play" class="btn ghost">播放</button>
+          <button id="play" class="btn ghost">朗讀</button>
           <button id="copy" class="btn ghost">複製</button>
         </div>
       </div>
     </section>
-    <p class="tiny" style="margin-top:16px;">這個正式版會直接打 Cloudflare Worker，避免本機測試和上線行為不一致。</p>
+    <p class="tiny" style="margin-top:16px;">直接輸入文字或使用語音，翻譯結果可即時顯示並朗讀。</p>
   </main>
 
   <script>
