@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>翻譯工具 - 繁中 / 英文 / 日文</title>
+    <meta name="theme-color" content="#07111f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/static/manifest.json" />
+    <link rel="icon" href="/static/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/static/icon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -47,7 +53,7 @@
 
           <div class="status-bar">
             <span id="statusText">準備好了。</span>
-            <span id="voiceStatus" class="voice-status">服務正常</span>
+            <span id="voiceStatus" class="voice-status">可用</span>
           </div>
         </div>
       </section>
@@ -90,5 +96,12 @@
       window.TRANSLATOR_API_BASE_URL = "{{ translator_api_base_url }}";
     </script>
     <script src="../static/translator.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/static/sw.js").catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>
