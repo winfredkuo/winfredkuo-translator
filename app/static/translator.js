@@ -10,8 +10,14 @@ const targetPreview = document.getElementById("targetPreview");
 const speakButton = document.getElementById("speakButton");
 const copySourceBtn = document.getElementById("copySourceBtn");
 const copyTargetBtn = document.getElementById("copyTargetBtn");
+const fullscreenButton = document.getElementById("fullscreenButton");
 const statusText = document.getElementById("statusText");
 const voiceStatus = document.getElementById("voiceStatus");
+const presentationOverlay = document.getElementById("presentationOverlay");
+const presentationDirection = document.getElementById("presentationDirection");
+const presentationSource = document.getElementById("presentationSource");
+const presentationTarget = document.getElementById("presentationTarget");
+const closePresentationButton = document.getElementById("closePresentationButton");
 const DEFAULT_REMOTE_TRANSLATE_BASE = "https://winfredkuo-translator.theoder.workers.dev";
 const TRANSLATE_API_BASE = (window.TRANSLATOR_API_BASE_URL || DEFAULT_REMOTE_TRANSLATE_BASE).replace(/\/$/, "");
 
@@ -50,6 +56,30 @@ function setTargetText(text) {
   targetPreview.classList.toggle("muted", !text);
   speakButton.disabled = !text;
   copyTargetBtn.disabled = !text;
+  fullscreenButton.disabled = !text;
+}
+
+function updatePresentationView() {
+  const direction = getDirection();
+  presentationDirection.textContent = `${direction.sourceLabel} → ${direction.targetLabel}`;
+  presentationSource.textContent = sourcePreview.classList.contains("muted")
+    ? "原文會顯示在這裡。"
+    : sourcePreview.textContent.trim();
+  presentationTarget.textContent = latestTranslation || "翻譯結果會顯示在這裡。";
+}
+
+function openPresentationView() {
+  if (!latestTranslation) return;
+  updatePresentationView();
+  presentationOverlay.classList.add("is-open");
+  presentationOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("presentation-mode");
+}
+
+function closePresentationView() {
+  presentationOverlay.classList.remove("is-open");
+  presentationOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("presentation-mode");
 }
 
 function getSpeechRecognitionLanguage() {
@@ -87,7 +117,7 @@ async function translateText(text) {
 
 function explainFetchFailure(error) {
   if (error instanceof TypeError && /fetch/i.test(error.message)) {
-    return "翻譯服務連不上。請確認 Cloudflare Worker 與前端網域設定。";
+    return "翻譯服務連不上，請稍後再試。";
   }
   return error.message || "翻譯失敗";
 }
@@ -278,6 +308,26 @@ copyTargetBtn.addEventListener("click", async () => {
   setStatus("翻譯結果已複製。");
 });
 
+fullscreenButton.addEventListener("click", () => {
+  openPresentationView();
+});
+
+closePresentationButton.addEventListener("click", () => {
+  closePresentationView();
+});
+
+presentationOverlay.addEventListener("click", (event) => {
+  if (event.target === presentationOverlay) {
+    closePresentationView();
+  }
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closePresentationView();
+  }
+});
+
 if (speechSynthesis) {
   speechSynthesis.onvoiceschanged = () => {
     if (latestTranslation) {
@@ -287,4 +337,4 @@ if (speechSynthesis) {
 }
 
 setStatus("準備好了。");
-setVoiceStatus("服務正常");
+setVoiceStatus("可用");
