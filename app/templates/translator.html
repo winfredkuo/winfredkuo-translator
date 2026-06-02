@@ -19,7 +19,7 @@
     <main class="app-shell">
       <section class="hero-card">
         <div class="hero-copy">
-          <p class="eyebrow">Translation</p>
+          <p class="eyebrow">Instant Translation</p>
           <h1>繁中、英文、日文即時互譯</h1>
           <p class="lead">
             支援繁體中文、英文、日文互譯。可直接輸入文字或使用語音，翻譯結果會即時顯示並可播放。
@@ -73,6 +73,7 @@
             <div class="card-actions">
               <button id="speakButton" class="ghost-btn" type="button" disabled>朗讀</button>
               <button id="copyTargetBtn" class="ghost-btn" type="button" disabled>複製</button>
+              <button id="fullscreenButton" class="ghost-btn" type="button" disabled>全畫面</button>
             </div>
           </div>
           <div id="targetPreview" class="result-text muted">翻譯結果會顯示在這裡。</div>
@@ -90,10 +91,28 @@
           <span>即時播放</span>
         </div>
       </section>
+
+      <div id="presentationOverlay" class="presentation-overlay" aria-hidden="true">
+        <div class="presentation-shell">
+          <div class="presentation-top">
+            <span id="presentationDirection" class="presentation-badge">展示模式</span>
+            <button id="closePresentationButton" class="ghost-btn" type="button">關閉</button>
+          </div>
+          <div class="presentation-copy">
+            <p id="presentationSource" class="presentation-source">原文會顯示在這裡。</p>
+            <h2 id="presentationTarget" class="presentation-target">翻譯結果會顯示在這裡。</h2>
+          </div>
+          <p class="presentation-hint">可直接把手機遞給對方查看。</p>
+        </div>
+      </div>
     </main>
 
     <script>
-      window.TRANSLATOR_API_BASE_URL = "{{ translator_api_base_url }}";
+      const templateApiBase = "{{ translator_api_base_url }}";
+      window.TRANSLATOR_API_BASE_URL =
+        templateApiBase && !templateApiBase.includes("{")
+          ? templateApiBase
+          : "https://winfredkuo-translator.theoder.workers.dev";
     </script>
     <script src="../static/translator.js"></script>
     <script>
