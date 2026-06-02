@@ -40,13 +40,13 @@ function setVoiceStatus(message) {
 }
 
 function setSourceText(text) {
-  sourcePreview.textContent = text || "翻譯前的內容會顯示在這裡。";
+  sourcePreview.textContent = text || "輸入的內容會顯示在這裡。";
   sourcePreview.classList.toggle("muted", !text);
 }
 
 function setTargetText(text) {
   latestTranslation = text || "";
-  targetPreview.textContent = text || "翻譯後的內容會顯示在這裡。";
+  targetPreview.textContent = text || "翻譯結果會顯示在這裡。";
   targetPreview.classList.toggle("muted", !text);
   speakButton.disabled = !text;
   copyTargetBtn.disabled = !text;
@@ -87,7 +87,7 @@ async function translateText(text) {
 
 function explainFetchFailure(error) {
   if (error instanceof TypeError && /fetch/i.test(error.message)) {
-    return "翻譯服務連不上。若你是直接開檔，請確認 Cloudflare Worker 有開 CORS，或改用本機網站網址。";
+    return "翻譯服務連不上。請確認 Cloudflare Worker 與前端網域設定。";
   }
   return error.message || "翻譯失敗";
 }
@@ -149,7 +149,7 @@ function stopRecording() {
   }
   isRecording = false;
   micButton.classList.remove("recording");
-  setVoiceStatus("麥克風未啟用");
+  setVoiceStatus("語音未啟用");
 }
 
 function finishRecording(text) {
@@ -159,7 +159,7 @@ function finishRecording(text) {
   return translateText(text)
     .then((translated) => {
       setTargetText(translated);
-      setStatus(`已翻譯完成：${getDirection().sourceLabel} → ${getDirection().targetLabel}`);
+      setStatus(`翻譯完成：${getDirection().sourceLabel} → ${getDirection().targetLabel}`);
     })
     .catch((error) => {
       setTargetText("");
@@ -172,7 +172,7 @@ function finishRecording(text) {
 
 function startRecognition() {
   if (!SpeechRecognition) {
-    setStatus("這個瀏覽器不支援麥克風語音辨識，建議改用 Safari 或 Chrome。");
+    setStatus("此瀏覽器不支援語音辨識。");
     return;
   }
 
@@ -190,7 +190,7 @@ function startRecognition() {
   isRecording = true;
   micButton.classList.add("recording");
   setVoiceStatus("正在聆聽...");
-  setStatus("請開始說話，完成後會自動翻譯。");
+  setStatus("請開始說話，辨識完成後會自動翻譯。");
 
   let finalTranscript = "";
 
@@ -253,7 +253,7 @@ micButton.addEventListener("click", () => {
 translateButton.addEventListener("click", () => {
   const text = inputText.value.trim();
   if (!text) {
-    setStatus("請先輸入文字，或按麥克風說話。");
+    setStatus("請先輸入文字，或使用語音輸入。");
     return;
   }
   setSourceText(text);
@@ -286,5 +286,5 @@ if (speechSynthesis) {
   };
 }
 
-setStatus("準備好了。請先選擇翻譯方向。");
-setVoiceStatus("麥克風未啟用");
+setStatus("準備好了。");
+setVoiceStatus("服務正常");
